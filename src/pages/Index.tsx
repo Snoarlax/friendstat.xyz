@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SpiderChart } from "@/components/SpiderChart";
 import { AxisEditor } from "@/components/AxisEditor";
 import { PlotEditor } from "@/components/PlotEditor";
@@ -19,7 +19,9 @@ export interface Plot {
 }
 
 const Index = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [isSmallChart, setIsSmallChart] = useState(false);
+  const chartRef = useRef(null);
   const [axes, setAxes] = useState<Axis[]>([
     { id: "1", name: "Speed", max: 100 },
     { id: "2", name: "Power", max: 100 },
@@ -37,6 +39,19 @@ const Index = () => {
     },
   ]);
 
+  {/* Update isSmallChart on window size change */}
+  useEffect(() => {
+    const viewportHeight = window.innerHeight;
+    if (!chartRef.current) return;
+
+    const observer = new ResizeObserver( () => {
+      const chartHeight = chartRef.current.clientHeight;
+      setIsSmallChart(menuIsOpen || chartHeight < viewportHeight * 0.4);
+    });
+    observer.observe(chartRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header Display */}
@@ -47,9 +62,9 @@ const Index = () => {
             <p className="text-sm text-muted-foreground mt-1">Create and customize radar charts</p>
           </div>
           <button 
-            onClick={() => setIsOpen(!isOpen)} 
+            onClick={() => setMenuIsOpen(!menuIsOpen)} 
             className="flex w-14 h-14 bg-blue-500 hover:bg-black text-white rounded-full shadow-lg items-center justify-center transition-all active:scale-95">
-            {isOpen ? <X size={24}/> : <Menu size={24}/>}
+            {menuIsOpen ? <X size={24}/> : <Menu size={24}/>}
           </button>
         </div>
       </header>
@@ -57,12 +72,12 @@ const Index = () => {
       <main className="container mx-auto px-6 py-8 flex-1 flex flex-col">
         <div className="h-screen gap-6 flex flex-col min-h-0">
           {/* Chart Display */}
-          <Card className="flex flex-1 items-center justify-center p-6 min-h-[40vh]">
-            <SpiderChart axes={axes} plots={plots} />
+          <Card ref={chartRef} className="flex flex-1 items-center justify-center p-6 min-h-[40vh]">
+            <SpiderChart axes={axes} plots={plots} isSmallChart={isSmallChart}/>
           </Card>
 
           {/* Controls */}
-          {isOpen && (
+          {menuIsOpen && (
             <div className={`transition-all duration-300 ease-out`}>
               <Card className="p-6 flex flex-col h-screen" >
                 <h2 className="text-lg font-semibold mb-4 text-foreground">Configuration</h2>

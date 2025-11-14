@@ -6,7 +6,7 @@ interface SpiderChartProps {
   plots: Plot[];
 }
 
-export const SpiderChart = ({ axes, plots }: SpiderChartProps) => {
+export const SpiderChart = ({ axes, plots, isSmallChart }: SpiderChartProps) => {
   // Transform data for recharts
   const chartData = axes.map((axis) => {
     const dataPoint: any = {
@@ -36,12 +36,12 @@ export const SpiderChart = ({ axes, plots }: SpiderChartProps) => {
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis 
           dataKey="axis" 
-          tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }}
+          tick={isSmallChart ? false : { fill: "hsl(var(--foreground))", fontSize: 12 }}
         />
         <PolarRadiusAxis 
           angle={90} 
           domain={[0, "dataMax"]}
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+          tick={isSmallChart ? false : { fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
         />
         {plots.map((plot) => (
           <Radar
