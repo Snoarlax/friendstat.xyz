@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SpiderChart } from "@/components/SpiderChart";
 import { AxisEditor } from "@/components/AxisEditor";
 import { PlotEditor } from "@/components/PlotEditor";
 import { Card } from "@/components/ui/card";
+import { Menu, X } from "lucide-react";
 
 export interface Axis {
   id: string;
@@ -18,6 +19,7 @@ export interface Plot {
 }
 
 const Index = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [axes, setAxes] = useState<Axis[]>([
     { id: "1", name: "Speed", max: 100 },
     { id: "2", name: "Power", max: 100 },
@@ -36,34 +38,40 @@ const Index = () => {
   ]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header Display */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4">
-          <h1 className="text-2xl font-bold text-foreground">Spider Chart Builder</h1>
-          <p className="text-sm text-muted-foreground mt-1">Create and customize multi-dimensional radar charts</p>
+        <div className="container mx-auto px-6 py-4 flex flex-row justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">FriendStat.xyz</h1>
+            <p className="text-sm text-muted-foreground mt-1">Create and customize radar charts</p>
+          </div>
+          <button 
+            onClick={() => setIsOpen(!isOpen)} 
+            className="flex w-14 h-14 bg-blue-500 hover:bg-black text-white rounded-full shadow-lg items-center justify-center transition-all active:scale-95">
+            {isOpen ? <X size={24}/> : <Menu size={24}/>}
+          </button>
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-8">
-        <div className="grid lg:grid-cols-2 gap-6">
+      <main className="container mx-auto px-6 py-8 flex-1 flex flex-col">
+        <div className="h-screen gap-6 flex flex-col min-h-0">
           {/* Chart Display */}
-          <Card className="p-6 lg:sticky lg:top-24 h-fit">
-            <h2 className="text-lg font-semibold mb-4 text-foreground">Chart Preview</h2>
+          <Card className="flex flex-1 items-center justify-center p-6 min-h-[40vh]">
             <SpiderChart axes={axes} plots={plots} />
           </Card>
 
           {/* Controls */}
-          <div className="space-y-6">
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold mb-4 text-foreground">Axes Configuration</h2>
-              <AxisEditor axes={axes} setAxes={setAxes} plots={plots} setPlots={setPlots} />
-            </Card>
-
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold mb-4 text-foreground">Data Plots</h2>
-              <PlotEditor axes={axes} plots={plots} setPlots={setPlots} />
-            </Card>
-          </div>
+          {isOpen && (
+            <div className={`transition-all duration-300 ease-out`}>
+              <Card className="p-6 flex flex-col h-screen" >
+                <h2 className="text-lg font-semibold mb-4 text-foreground">Configuration</h2>
+                <div className="flex-1 overflow-y-auto">
+                  <AxisEditor axes={axes} setAxes={setAxes} plots={plots} setPlots={setPlots} />
+                </div>
+              </Card>
+            </div>
+          )}
         </div>
       </main>
     </div>

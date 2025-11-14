@@ -29,8 +29,9 @@ export const SpiderChart = ({ axes, plots }: SpiderChartProps) => {
     );
   }
 
+
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="99%">
       <RadarChart data={chartData}>
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis 
