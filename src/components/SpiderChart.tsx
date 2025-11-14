@@ -1,5 +1,6 @@
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { Axis, Plot } from "@/pages/Index";
+import { useState, useEffect } from "react";
 
 interface SpiderChartProps {
   axes: Axis[];
@@ -7,6 +8,23 @@ interface SpiderChartProps {
 }
 
 export const SpiderChart = ({ axes, plots }: SpiderChartProps) => {
+  const [isSmallChart, setIsSmallChart] = useState(false);
+
+  useEffect(() => {
+    const checkSize = () => {
+      const viewportHeight = window.innerHeight;
+      const chartElement = document.querySelector('.recharts-wrapper');
+      if (chartElement) {
+        const chartHeight = chartElement.clientHeight;
+        setIsSmallChart(chartHeight < viewportHeight * 0.5);
+      }
+    };
+
+    checkSize();
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  }, [axes, plots]);
+
   // Transform data for recharts
   const chartData = axes.map((axis) => {
     const dataPoint: any = {
@@ -36,12 +54,12 @@ export const SpiderChart = ({ axes, plots }: SpiderChartProps) => {
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis 
           dataKey="axis" 
-          tick={{ fill: "hsl(var(--foreground))", fontSize: 12 }}
+          tick={isSmallChart ? false : { fill: "hsl(var(--foreground))", fontSize: 12 }}
         />
         <PolarRadiusAxis 
           angle={90} 
           domain={[0, "dataMax"]}
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+          tick={isSmallChart ? false : { fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
         />
         {plots.map((plot) => (
           <Radar
