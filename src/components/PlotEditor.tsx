@@ -9,6 +9,8 @@ interface PlotEditorProps {
   axes: Axis[];
   plots: Plot[];
   setPlots: (plots: Plot[]) => void;
+  selectedPlotId: string | null;
+  setSelectedPlotId: (id: string | null) => void;
 }
 
 const defaultColors = [
@@ -19,7 +21,7 @@ const defaultColors = [
   "hsl(142, 76%, 36%)",
 ];
 
-export const PlotEditor = ({ axes, plots, setPlots }: PlotEditorProps) => {
+export const PlotEditor = ({ axes, plots, setPlots, selectedPlotId, setSelectedPlotId }: PlotEditorProps) => {
   const addPlot = () => {
     const newId = Date.now().toString();
     const values: { [axisId: string]: number } = {};
@@ -35,6 +37,7 @@ export const PlotEditor = ({ axes, plots, setPlots }: PlotEditorProps) => {
     };
 
     setPlots([...plots, newPlot]);
+    setSelectedPlotId(newId);
     toast.success("Plot added");
   };
 
@@ -64,7 +67,15 @@ export const PlotEditor = ({ axes, plots, setPlots }: PlotEditorProps) => {
   return (
     <div className="space-y-6">
       {plots.map((plot) => (
-        <div key={plot.id} className="p-4 rounded-lg border border-border bg-card/50 space-y-4">
+        <div 
+          key={plot.id} 
+          className={`p-4 rounded-lg border space-y-4 cursor-pointer transition-all ${
+            plot.id === selectedPlotId 
+              ? 'border-primary bg-primary/5 shadow-md' 
+              : 'border-border bg-card/50 hover:border-primary/50'
+          }`}
+          onClick={() => setSelectedPlotId(plot.id)}
+        >
           <div className="flex gap-3 items-end">
             <div className="flex-1">
               <Label htmlFor={`plot-name-${plot.id}`} className="text-sm">
