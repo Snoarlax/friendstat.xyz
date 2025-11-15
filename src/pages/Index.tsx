@@ -39,6 +39,8 @@ const Index = () => {
     },
   ]);
 
+  const [selectedPlotId, setSelectedPlotId] = useState<string | null>(plots[0]?.id || null);
+
   {/* Update isSmallChart on window size change */}
   useEffect(() => {
     const viewportHeight = window.innerHeight;
@@ -73,7 +75,14 @@ const Index = () => {
         <div className="h-screen gap-6 flex flex-col min-h-0">
           {/* Chart Display */}
           <Card ref={chartRef} className="flex flex-1 items-center justify-center p-6 min-h-[40vh]">
-            <SpiderChart axes={axes} plots={plots} isSmallChart={isSmallChart}/>
+            <SpiderChart 
+              axes={axes} 
+              plots={plots} 
+              isSmallChart={isSmallChart}
+              selectedPlotId={selectedPlotId}
+              setSelectedPlotId={setSelectedPlotId}
+              setPlots={setPlots}
+            />
           </Card>
 
           {/* Controls */}
@@ -81,8 +90,21 @@ const Index = () => {
             <div className={`transition-all duration-300 ease-out`}>
               <Card className="p-6 flex flex-col h-screen" >
                 <h2 className="text-lg font-semibold mb-4 text-foreground">Configuration</h2>
-                <div className="flex-1 overflow-y-auto">
-                  <AxisEditor axes={axes} setAxes={setAxes} plots={plots} setPlots={setPlots} />
+                <div className="flex-1 overflow-y-auto space-y-6">
+                  <div>
+                    <h3 className="text-sm font-medium mb-3 text-muted-foreground">Axes Configuration</h3>
+                    <AxisEditor axes={axes} setAxes={setAxes} plots={plots} setPlots={setPlots} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium mb-3 text-muted-foreground">Plots Configuration</h3>
+                    <PlotEditor 
+                      axes={axes} 
+                      plots={plots} 
+                      setPlots={setPlots}
+                      selectedPlotId={selectedPlotId}
+                      setSelectedPlotId={setSelectedPlotId}
+                    />
+                  </div>
                 </div>
               </Card>
             </div>
