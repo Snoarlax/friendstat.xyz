@@ -2,7 +2,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { Axis, Plot } from "@/pages/Index";
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface SpiderChartProps {
@@ -46,6 +46,15 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
     setPlots([...plots, newPlot]);
     setSelectedPlotId(newId);
     toast.success("Plot added");
+  };
+
+  const removePlot = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPlots(plots.filter((p) => p.id !== id));
+    if (selectedPlotId === id) {
+      setSelectedPlotId(null);
+    }
+    toast.success("Plot removed");
   };
 
   useEffect(() => {
@@ -165,19 +174,29 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       <div className="absolute top-2 left-2 z-[5] bg-card border border-border rounded-md shadow-sm p-2">
         <div className="flex flex-col gap-1.5">
           {plots.map((plot) => (
-            <button
+            <div
               key={plot.id}
-              onClick={() => setSelectedPlotId(plot.id)}
-              className={`flex items-center gap-2 px-2 py-1 rounded transition-colors hover:bg-muted/50 ${
+              className={`group flex items-center gap-2 px-2 py-1 rounded transition-colors hover:bg-muted/50 ${
                 plot.id === selectedPlotId ? 'bg-muted ring-2 ring-primary/20' : ''
               }`}
             >
-              <div 
-                className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: plot.color }}
-              />
-              <span className="text-sm font-medium">{plot.name}</span>
-            </button>
+              <button
+                onClick={() => setSelectedPlotId(plot.id)}
+                className="flex items-center gap-2 flex-1"
+              >
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: plot.color }}
+                />
+                <span className="text-sm font-medium">{plot.name}</span>
+              </button>
+              <button
+                onClick={(e) => removePlot(plot.id, e)}
+                className="p-1 hover:bg-destructive/10 rounded text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
           ))}
           <Button
             onClick={addPlot}
