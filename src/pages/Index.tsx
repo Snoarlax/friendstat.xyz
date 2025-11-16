@@ -69,7 +69,7 @@ const Index = () => {
           </div>
           <button 
             onClick={() => setMenuIsOpen(!menuIsOpen)} 
-            className="flex w-14 h-14 bg-blue-500 hover:bg-black text-white rounded-full shadow-lg items-center justify-center transition-all active:scale-95">
+            className="flex w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg items-center justify-center transition-all active:scale-95">
             {menuIsOpen ? <X size={24}/> : <Menu size={24}/>}
           </button>
         </div>
