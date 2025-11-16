@@ -39,8 +39,8 @@ export const AxisEditor = ({ axes, setAxes, plots, setPlots, useSharedMax, setUs
   };
 
   const removeAxis = (id: string) => {
-    if (axes.length <= 1) {
-      toast.error("Must have at least one axis");
+    if (axes.length <= 3) {
+      toast.error("Must have at least three axes");
       return;
     }
     

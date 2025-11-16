@@ -90,7 +90,7 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
     updateChartDimensions();
     window.addEventListener('resize', updateChartDimensions);
     return () => window.removeEventListener('resize', updateChartDimensions);
-  }, [axes, plots]);
+  }, [axes, plots, isSmallChart]);
 
   const handleChartInteraction = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current || !selectedPlotId) return;

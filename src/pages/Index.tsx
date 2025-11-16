@@ -143,7 +143,6 @@ const Index = () => {
             <p className="text-sm text-muted-foreground mt-1 font-space">Rank your friends!</p>
           </div>
           <div className="flex flex-col items-end gap-1">
-            <span className="text-xs text-muted-foreground">Configuration</span>
             <button 
               onClick={() => setMenuIsOpen(!menuIsOpen)} 
               className="flex w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg items-center justify-center transition-all active:scale-95">
