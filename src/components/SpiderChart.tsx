@@ -131,17 +131,27 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       onMouseLeave={handleMouseUp}
       style={{ cursor: isDragging ? 'grabbing' : (selectedPlotId ? 'grab' : 'default') }}
     >
-      {selectedPlot && (
-        <div className="absolute top-2 left-2 z-[5] px-3 py-1.5 rounded-md bg-card border border-border shadow-sm">
-          <div className="flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: selectedPlot.color }}
-            />
-            <span className="text-sm font-medium">Editing: {selectedPlot.name}</span>
-          </div>
+      {/* Custom Legend in top left */}
+      <div className="absolute top-2 left-2 z-[5] bg-card border border-border rounded-md shadow-sm p-2">
+        <div className="flex flex-col gap-1.5">
+          {plots.map((plot) => (
+            <button
+              key={plot.id}
+              onClick={() => setSelectedPlotId(plot.id)}
+              className={`flex items-center gap-2 px-2 py-1 rounded transition-colors hover:bg-muted/50 ${
+                plot.id === selectedPlotId ? 'bg-muted ring-2 ring-primary/20' : ''
+              }`}
+            >
+              <div 
+                className="w-3 h-3 rounded-full" 
+                style={{ backgroundColor: plot.color }}
+              />
+              <span className="text-sm font-medium">{plot.name}</span>
+            </button>
+          ))}
         </div>
-      )}
+      </div>
+
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={chartData}>
         <PolarGrid stroke="hsl(var(--border))" />
@@ -168,12 +178,6 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
             style={{ cursor: 'pointer' }}
           />
         ))}
-        <Legend 
-          wrapperStyle={{ 
-            paddingTop: "20px",
-            fontSize: "14px"
-          }}
-        />
       </RadarChart>
     </ResponsiveContainer>
     </div>
