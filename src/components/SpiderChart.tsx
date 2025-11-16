@@ -16,6 +16,7 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
   const [isDragging, setIsDragging] = useState(false);
   const [chartCenter, setChartCenter] = useState({ x: 0, y: 0 });
   const [chartRadius, setChartRadius] = useState(0);
+  const [fontSize, setFontSize] = useState({ axis: 12, radius: 10 });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -28,6 +29,11 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       const size = Math.min(rect.width, rect.height);
       setChartRadius(size * 0.35); // Approximate chart radius
       setChartCenter({ x: rect.width / 2, y: rect.height / 2 });
+      
+      // Scale font sizes based on chart size
+      const axisFontSize = Math.max(8, Math.min(16, size / 30));
+      const radiusFontSize = Math.max(7, Math.min(12, size / 40));
+      setFontSize({ axis: axisFontSize, radius: radiusFontSize });
     };
 
     updateChartDimensions();
@@ -141,12 +147,12 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis 
           dataKey="axis" 
-          tick={isSmallChart ? false : { fill: "hsl(var(--foreground))", fontSize: 12 }}
+          tick={isSmallChart ? false : { fill: "hsl(var(--foreground))", fontSize: fontSize.axis }}
         />
         <PolarRadiusAxis 
           angle={90} 
           domain={[0, Math.max(...axes.map(a => a.max))]}
-          tick={isSmallChart ? false : { fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+          tick={isSmallChart ? false : { fill: "hsl(var(--muted-foreground))", fontSize: fontSize.radius }}
         />
         {plots.map((plot) => (
           <Radar
