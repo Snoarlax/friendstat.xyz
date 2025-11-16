@@ -145,7 +145,7 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
         />
         <PolarRadiusAxis 
           angle={90} 
-          domain={[0, "dataMax"]}
+          domain={[0, Math.max(...axes.map(a => a.max))]}
           tick={isSmallChart ? false : { fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
         />
         {plots.map((plot) => (
