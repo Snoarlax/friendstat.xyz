@@ -3,7 +3,9 @@ import { SpiderChart } from "@/components/SpiderChart";
 import { AxisEditor } from "@/components/AxisEditor";
 import { PlotEditor } from "@/components/PlotEditor";
 import { Card } from "@/components/ui/card";
-import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Menu, X, Shuffle } from "lucide-react";
+import { toast } from "sonner";
 
 export interface Axis {
   id: string;
@@ -104,6 +106,20 @@ const Index = () => {
 
   const [selectedPlotId, setSelectedPlotId] = useState<string | null>(plots[0]?.id || null);
 
+  const randomizeAxisNames = () => {
+    const usedNames = new Set<string>();
+    const newAxes = axes.map(axis => {
+      let randomName;
+      do {
+        randomName = randomAttributes[getRandomInt(randomAttributes.length)];
+      } while (usedNames.has(randomName) && usedNames.size < randomAttributes.length);
+      usedNames.add(randomName);
+      return { ...axis, name: randomName };
+    });
+    setAxes(newAxes);
+    toast.success("Axis names randomized");
+  };
+
   {/* Update isSmallChart on window size change */}
   useEffect(() => {
     const viewportHeight = window.innerHeight;
@@ -158,11 +174,22 @@ const Index = () => {
           {menuIsOpen && (
             <div className={`transition-all duration-300 ease-out`}>
               <Card className="p-6 flex flex-col h-screen" >
-                <h2 className="text-lg font-semibold mb-4 text-foreground">Configuration</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-foreground">Configuration</h2>
+                  <Button 
+                    onClick={randomizeAxisNames} 
+                    variant="outline" 
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <Shuffle className="h-4 w-4" />
+                    Randomize Names
+                  </Button>
+                </div>
                 <div className="flex-1 overflow-y-auto space-y-6">
                   <div>
                     <h3 className="text-sm font-medium mb-3 text-muted-foreground">Axes Configuration</h3>
-                    <AxisEditor 
+                    <AxisEditor
                       axes={axes} 
                       setAxes={setAxes} 
                       plots={plots} 
