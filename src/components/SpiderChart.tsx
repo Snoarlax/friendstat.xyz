@@ -1,6 +1,9 @@
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { Axis, Plot } from "@/pages/Index";
 import { useRef, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
 
 interface SpiderChartProps {
   axes: Axis[];
@@ -11,12 +14,39 @@ interface SpiderChartProps {
   setPlots: (plots: Plot[]) => void;
 }
 
+const defaultColors = [
+  "hsl(217, 91%, 60%)",
+  "hsl(189, 94%, 43%)",
+  "hsl(271, 81%, 56%)",
+  "hsl(31, 97%, 72%)",
+  "hsl(142, 76%, 36%)",
+];
+
 export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSelectedPlotId, setPlots }: SpiderChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [chartCenter, setChartCenter] = useState({ x: 0, y: 0 });
   const [chartRadius, setChartRadius] = useState(0);
   const [fontSize, setFontSize] = useState({ axis: 12, radius: 10 });
+
+  const addPlot = () => {
+    const newId = Date.now().toString();
+    const values: { [axisId: string]: number } = {};
+    axes.forEach((axis) => {
+      values[axis.id] = 0;
+    });
+
+    const newPlot: Plot = {
+      id: newId,
+      name: `Plot ${plots.length + 1}`,
+      color: defaultColors[plots.length % defaultColors.length],
+      values,
+    };
+
+    setPlots([...plots, newPlot]);
+    setSelectedPlotId(newId);
+    toast.success("Plot added");
+  };
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -149,6 +179,15 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
               <span className="text-sm font-medium">{plot.name}</span>
             </button>
           ))}
+          <Button
+            onClick={addPlot}
+            variant="outline"
+            size="sm"
+            className="mt-1 w-full justify-start gap-2"
+          >
+            <Plus className="h-3 w-3" />
+            Add Plot
+          </Button>
         </div>
       </div>
 
