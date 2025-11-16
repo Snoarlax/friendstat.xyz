@@ -58,10 +58,10 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header Display */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4 flex flex-row justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">FriendStat.xyz</h1>
-            <p className="text-sm text-muted-foreground mt-1">Create and customize radar charts</p>
+        <div className="container mx-auto px-6 py-4 flex flex-row justify-between items-center">
+          <div className="flex-1 text-center">
+            <h1 className="text-3xl font-bold text-foreground font-space">FriendStat.xyz</h1>
+            <p className="text-sm text-muted-foreground mt-1 font-space">Create and customize radar charts</p>
           </div>
           <button 
             onClick={() => setMenuIsOpen(!menuIsOpen)} 
