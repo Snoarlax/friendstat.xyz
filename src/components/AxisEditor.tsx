@@ -134,7 +134,7 @@ export const AxisEditor = ({ axes, setAxes, plots, setPlots, useSharedMax, setUs
         </div>
       ))}
       
-      <Button onClick={addAxis} className="w-full" variant="outline">
+      <Button onClick={addAxis} className="w-full" variant="default">
         <Plus className="h-4 w-4 mr-2" />
         Add Axis
       </Button>

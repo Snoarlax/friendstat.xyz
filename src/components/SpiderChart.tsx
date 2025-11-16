@@ -19,6 +19,7 @@ interface SpiderChartProps {
   setShowLabels: (value: boolean) => void;
   useSharedMax: boolean;
   sharedMaxValue: number;
+  setAxes: (axes: Axis[]) => void;
 }
 
 const defaultColors = [
@@ -29,7 +30,7 @@ const defaultColors = [
   "hsl(142, 76%, 36%)",
 ];
 
-export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSelectedPlotId, setPlots, showLegend, setShowLegend, showLabels, setShowLabels, useSharedMax, sharedMaxValue }: SpiderChartProps) => {
+export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSelectedPlotId, setPlots, showLegend, setShowLegend, showLabels, setShowLabels, useSharedMax, sharedMaxValue, setAxes }: SpiderChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [chartCenter, setChartCenter] = useState({ x: 0, y: 0 });
@@ -37,6 +38,8 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
   const [fontSize, setFontSize] = useState({ axis: 12, radius: 10 });
   const [editingPlotId, setEditingPlotId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [editingAxisId, setEditingAxisId] = useState<string | null>(null);
+  const [editingAxisName, setEditingAxisName] = useState("");
 
   const addPlot = () => {
     const newId = Date.now().toString();
@@ -176,6 +179,36 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       setEditingName("");
     }
   };
+
+  const handleAxisLabelDoubleClick = (axis: Axis) => {
+    setEditingAxisId(axis.id);
+    setEditingAxisName(axis.name);
+  };
+
+  const handleAxisLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingAxisName(e.target.value);
+  };
+
+  const handleAxisLabelSave = (axisId: string) => {
+    if (editingAxisName.trim()) {
+      const updatedAxes = axes.map(axis =>
+        axis.id === axisId ? { ...axis, name: editingAxisName.trim() } : axis
+      );
+      setAxes(updatedAxes);
+      setEditingAxisId(null);
+      setEditingAxisName("");
+    }
+  };
+
+  const handleAxisLabelKeyDown = (e: React.KeyboardEvent, axisId: string) => {
+    if (e.key === 'Enter') {
+      handleAxisLabelSave(axisId);
+    } else if (e.key === 'Escape') {
+      setEditingAxisId(null);
+      setEditingAxisName("");
+    }
+  };
+
   // Transform data for recharts
   const effectiveMax = useSharedMax ? sharedMaxValue : Math.max(...axes.map(a => a.max));
   const chartData = axes.map((axis) => {
@@ -305,7 +338,43 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
         />
         <PolarAngleAxis 
           dataKey="axis" 
-          tick={isSmallChart || !showLabels ? false : { fill: "hsl(var(--foreground))", fontSize: fontSize.axis, dy: -8 }}
+          tick={(props) => {
+            if (isSmallChart || !showLabels) return null;
+            
+            const { x, y, payload } = props;
+            const axis = axes.find(a => a.name === payload.value);
+            
+            if (!axis) return null;
+            
+            if (editingAxisId === axis.id) {
+              return (
+                <foreignObject x={x - 60} y={y - 12} width="120" height="24">
+                  <Input
+                    value={editingAxisName}
+                    onChange={handleAxisLabelChange}
+                    onBlur={() => handleAxisLabelSave(axis.id)}
+                    onKeyDown={(e) => handleAxisLabelKeyDown(e, axis.id)}
+                    autoFocus
+                    className="h-6 text-xs px-2"
+                  />
+                </foreignObject>
+              );
+            }
+            
+            return (
+              <text
+                x={x}
+                y={y - 8}
+                textAnchor="middle"
+                fill="hsl(var(--foreground))"
+                fontSize={fontSize.axis}
+                onDoubleClick={() => handleAxisLabelDoubleClick(axis)}
+                style={{ cursor: 'pointer' }}
+              >
+                {payload.value}
+              </text>
+            );
+          }}
           tickLine={false}
         />
         <PolarRadiusAxis 
