@@ -143,7 +143,7 @@ export const PlotEditor = ({ axes, plots, setPlots, selectedPlotId, setSelectedP
         </div>
       ))}
 
-      <Button onClick={addPlot} className="w-full" variant="outline">
+      <Button onClick={addPlot} className="w-full" variant="default">
         <Plus className="h-4 w-4 mr-2" />
         Add Plot
       </Button>

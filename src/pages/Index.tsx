@@ -142,11 +142,14 @@ const Index = () => {
             <h1 className="text-3xl font-bold text-foreground font-space">FriendStat.xyz</h1>
             <p className="text-sm text-muted-foreground mt-1 font-space">Rank your friends!</p>
           </div>
-          <button 
-            onClick={() => setMenuIsOpen(!menuIsOpen)} 
-            className="flex w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg items-center justify-center transition-all active:scale-95">
-            {menuIsOpen ? <X size={24}/> : <Menu size={24}/>}
-          </button>
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-xs text-muted-foreground">Configuration</span>
+            <button 
+              onClick={() => setMenuIsOpen(!menuIsOpen)} 
+              className="flex w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg items-center justify-center transition-all active:scale-95">
+              {menuIsOpen ? <X size={24}/> : <Menu size={24}/>}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -167,6 +170,7 @@ const Index = () => {
               setShowLabels={setShowLabels}
               useSharedMax={useSharedMax}
               sharedMaxValue={sharedMaxValue}
+              setAxes={setAxes}
             />
           </Card>
 
