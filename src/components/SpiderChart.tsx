@@ -2,6 +2,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { Axis, Plot } from "@/pages/Index";
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Eye, EyeOff, Tag, Type } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,6 +35,8 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
   const [chartCenter, setChartCenter] = useState({ x: 0, y: 0 });
   const [chartRadius, setChartRadius] = useState(0);
   const [fontSize, setFontSize] = useState({ axis: 12, radius: 10 });
+  const [editingPlotId, setEditingPlotId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
 
   const addPlot = () => {
     const newId = Date.now().toString();
@@ -144,6 +147,35 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
   const handleMouseUp = () => {
     setIsDragging(false);
   };
+
+  const handlePlotNameDoubleClick = (plot: Plot) => {
+    setEditingPlotId(plot.id);
+    setEditingName(plot.name);
+  };
+
+  const handlePlotNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingName(e.target.value);
+  };
+
+  const handlePlotNameSave = () => {
+    if (editingPlotId && editingName.trim()) {
+      const updatedPlots = plots.map(plot =>
+        plot.id === editingPlotId ? { ...plot, name: editingName.trim() } : plot
+      );
+      setPlots(updatedPlots);
+    }
+    setEditingPlotId(null);
+    setEditingName("");
+  };
+
+  const handlePlotNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handlePlotNameSave();
+    } else if (e.key === "Escape") {
+      setEditingPlotId(null);
+      setEditingName("");
+    }
+  };
   // Transform data for recharts
   const effectiveMax = useSharedMax ? sharedMaxValue : Math.max(...axes.map(a => a.max));
   const chartData = axes.map((axis) => {
@@ -223,7 +255,27 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
                   className="w-3 h-3 rounded-full" 
                   style={{ backgroundColor: plot.color }}
                 />
-                <span className="text-sm font-medium">{plot.name}</span>
+                {editingPlotId === plot.id ? (
+                  <Input
+                    value={editingName}
+                    onChange={handlePlotNameChange}
+                    onBlur={handlePlotNameSave}
+                    onKeyDown={handlePlotNameKeyDown}
+                    className="h-6 text-sm px-1 py-0"
+                    autoFocus
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <span 
+                    className="text-sm font-medium cursor-text"
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                      handlePlotNameDoubleClick(plot);
+                    }}
+                  >
+                    {plot.name}
+                  </span>
+                )}
               </button>
               <button
                 onClick={(e) => removePlot(plot.id, e)}
