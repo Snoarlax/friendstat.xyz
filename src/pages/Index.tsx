@@ -22,6 +22,10 @@ const Index = () => {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [isSmallChart, setIsSmallChart] = useState(false);
   const chartRef = useRef(null);
+  const [showLegend, setShowLegend] = useState(true);
+  const [showLabels, setShowLabels] = useState(true);
+  const [useSharedMax, setUseSharedMax] = useState(false);
+  const [sharedMaxValue, setSharedMaxValue] = useState(10);
   const [axes, setAxes] = useState<Axis[]>([
     { id: "1", name: "Speed", max: 5 },
     { id: "2", name: "Power", max: 5 },
@@ -82,6 +86,12 @@ const Index = () => {
               selectedPlotId={selectedPlotId}
               setSelectedPlotId={setSelectedPlotId}
               setPlots={setPlots}
+              showLegend={showLegend}
+              setShowLegend={setShowLegend}
+              showLabels={showLabels}
+              setShowLabels={setShowLabels}
+              useSharedMax={useSharedMax}
+              sharedMaxValue={sharedMaxValue}
             />
           </Card>
 
@@ -93,7 +103,16 @@ const Index = () => {
                 <div className="flex-1 overflow-y-auto space-y-6">
                   <div>
                     <h3 className="text-sm font-medium mb-3 text-muted-foreground">Axes Configuration</h3>
-                    <AxisEditor axes={axes} setAxes={setAxes} plots={plots} setPlots={setPlots} />
+                    <AxisEditor 
+                      axes={axes} 
+                      setAxes={setAxes} 
+                      plots={plots} 
+                      setPlots={setPlots}
+                      useSharedMax={useSharedMax}
+                      setUseSharedMax={setUseSharedMax}
+                      sharedMaxValue={sharedMaxValue}
+                      setSharedMaxValue={setSharedMaxValue}
+                    />
                   </div>
                   <div>
                     <h3 className="text-sm font-medium mb-3 text-muted-foreground">Plots Configuration</h3>

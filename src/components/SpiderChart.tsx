@@ -2,10 +2,9 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { Axis, Plot } from "@/pages/Index";
 import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, Tag, Type } from "lucide-react";
 import { toast } from "sonner";
 
-// TODO: set static max valueacross all instead of individual
 interface SpiderChartProps {
   axes: Axis[];
   plots: Plot[];
@@ -13,6 +12,12 @@ interface SpiderChartProps {
   selectedPlotId: string | null;
   setSelectedPlotId: (id: string | null) => void;
   setPlots: (plots: Plot[]) => void;
+  showLegend: boolean;
+  setShowLegend: (value: boolean) => void;
+  showLabels: boolean;
+  setShowLabels: (value: boolean) => void;
+  useSharedMax: boolean;
+  sharedMaxValue: number;
 }
 
 const defaultColors = [
@@ -23,7 +28,7 @@ const defaultColors = [
   "hsl(142, 76%, 36%)",
 ];
 
-export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSelectedPlotId, setPlots }: SpiderChartProps) => {
+export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSelectedPlotId, setPlots, showLegend, setShowLegend, showLabels, setShowLabels, useSharedMax, sharedMaxValue }: SpiderChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [chartCenter, setChartCenter] = useState({ x: 0, y: 0 });
@@ -105,14 +110,16 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
     
     // Calculate value based on distance (max at chartRadius)
     const normalizedDistance = Math.min(distance / chartRadius, 1);
-    const value = Math.round(normalizedDistance * selectedAxis.max);
+    const axisMax = useSharedMax ? sharedMaxValue : selectedAxis.max;
+    const value = Math.round(normalizedDistance * axisMax);
     
     // Update the selected plot
     const updatedPlots = plots.map(plot => {
       if (plot.id === selectedPlotId) {
+        const axisMax = useSharedMax ? sharedMaxValue : selectedAxis.max;
         return {
           ...plot,
-          values: { ...plot.values, [selectedAxis.id]: Math.max(0, Math.min(value, selectedAxis.max)) }
+          values: { ...plot.values, [selectedAxis.id]: Math.max(0, Math.min(value, axisMax)) }
         };
       }
       return plot;
@@ -138,14 +145,16 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
     setIsDragging(false);
   };
   // Transform data for recharts
+  const effectiveMax = useSharedMax ? sharedMaxValue : Math.max(...axes.map(a => a.max));
   const chartData = axes.map((axis) => {
+    const axisMax = useSharedMax ? sharedMaxValue : axis.max;
     const dataPoint: any = {
       axis: axis.name,
-      fullMark: axis.max,
+      fullMark: axisMax,
     };
     plots.forEach((plot) => {
       const plotValue = plot.values[axis.id] || 0;
-      dataPoint[plot.name] = Math.max(0, Math.min(axis.max, plotValue));
+      dataPoint[plot.name] = Math.max(0, Math.min(axisMax, plotValue));
     });
     
     return dataPoint;
@@ -172,8 +181,32 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       onMouseLeave={handleMouseUp}
       style={{ cursor: isDragging ? 'grabbing' : (selectedPlotId ? 'grab' : 'default') }}
     >
+      {/* View Control Buttons in top right */}
+      {!isSmallChart && (
+        <div className="absolute top-2 right-2 z-[5] flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowLegend(!showLegend)}
+            className="h-8 w-8"
+            title={showLegend ? "Hide legend" : "Show legend"}
+          >
+            {showLegend ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowLabels(!showLabels)}
+            className="h-8 w-8"
+            title={showLabels ? "Hide labels" : "Show labels"}
+          >
+            {showLabels ? <Type className="h-4 w-4" /> : <Type className="h-4 w-4 opacity-50" />}
+          </Button>
+        </div>
+      )}
+
       {/* Custom Legend in top left */}
-      {!isSmallChart && (<div className="absolute top-2 left-2 z-[5] bg-card border border-border rounded-md shadow-sm p-2">
+      {!isSmallChart && showLegend && (<div className="absolute top-2 left-2 z-[5] bg-card border border-border rounded-md shadow-sm p-2">
         <div className="flex flex-col gap-1.5">
           {plots.map((plot) => (
             <div
@@ -214,16 +247,20 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
 
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={chartData}>
-        <PolarGrid stroke="hsl(var(--border))" />
+        <PolarGrid 
+          stroke="hsl(var(--border))" 
+          gridType={effectiveMax < 10 ? "circle" : "polygon"}
+        />
         <PolarAngleAxis 
           dataKey="axis" 
-          tick={isSmallChart ? false : { fill: "hsl(var(--foreground))", fontSize: fontSize.axis, dy: -8 }}
+          tick={isSmallChart || !showLabels ? false : { fill: "hsl(var(--foreground))", fontSize: fontSize.axis, dy: -8 }}
           tickLine={false}
         />
         <PolarRadiusAxis 
           angle={90} 
-          domain={[0, Math.max(...axes.map(a => a.max))]}
-          tick={isSmallChart ? false : { fill: "hsl(var(--muted-foreground))", fontSize: fontSize.radius }}
+          domain={[0, effectiveMax]}
+          tick={isSmallChart || !showLabels ? false : { fill: "hsl(var(--muted-foreground))", fontSize: fontSize.radius }}
+          tickCount={effectiveMax < 10 ? effectiveMax + 1 : undefined}
         />
         {plots.map((plot) => (
           <Radar
