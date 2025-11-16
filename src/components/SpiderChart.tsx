@@ -132,7 +132,7 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       style={{ cursor: isDragging ? 'grabbing' : (selectedPlotId ? 'grab' : 'default') }}
     >
       {selectedPlot && (
-        <div className="absolute top-2 left-2 z-10 px-3 py-1.5 rounded-md bg-card border border-border shadow-sm">
+        <div className="absolute top-2 left-2 z-[5] px-3 py-1.5 rounded-md bg-card border border-border shadow-sm">
           <div className="flex items-center gap-2">
             <div 
               className="w-3 h-3 rounded-full" 
