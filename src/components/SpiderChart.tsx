@@ -147,7 +147,8 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis 
           dataKey="axis" 
-          tick={isSmallChart ? false : { fill: "hsl(var(--foreground))", fontSize: fontSize.axis }}
+          tick={isSmallChart ? false : { fill: "hsl(var(--foreground))", fontSize: fontSize.axis, dy: -8 }}
+          tickLine={false}
         />
         <PolarRadiusAxis 
           angle={90} 
