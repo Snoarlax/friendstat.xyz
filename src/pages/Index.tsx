@@ -18,6 +18,65 @@ export interface Plot {
   values: { [axisId: string]: number };
 }
 
+const randomAttributes = [
+  "maturity",
+  "intelligence",
+  "height",
+  "brainrot",
+  "charm",
+  "memeability",
+  "awkwardness",
+  "caffeine tolerance",
+  "dancing skills",
+  "sarcasm level",
+  "stubbornness",
+  "kindness",
+  "spontaneity",
+  "creativity",
+  "chaos potential",
+  "snack obsession",
+  "procrastination skills",
+  "adaptability",
+  "inner peace",
+  "punctuality",
+  "attention span",
+  "optimism",
+  "patience",
+  "social awkwardness",
+  "meme knowledge",
+  "texting speed",
+  "emotional intelligence",
+  "sleep schedule",
+  "bad joke tolerance",
+  "multitasking ability",
+  "love for puns",
+  "spontaneous dance moves",
+  "introversion level",
+  "extroversion level",
+  "problem-solving skills",
+  "baking skills",
+  "ability to stay calm under pressure",
+  "resilience",
+  "ability to start small talk",
+  "people-pleasing tendency",
+  "coordination",
+  "imagination",
+  "ability to find a parking spot",
+  "phone battery life",
+  "likelihood to nap during the day",
+  "social media savviness",
+  "handwriting legibility",
+  "ability to remember birthdays",
+  "cat whispering skills",
+  "ability to avoid spoilers",
+  "comfort with public speaking",
+  "cooking skills"
+];
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 const Index = () => {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [isSmallChart, setIsSmallChart] = useState(false);
@@ -27,11 +86,11 @@ const Index = () => {
   const [useSharedMax, setUseSharedMax] = useState(false);
   const [sharedMaxValue, setSharedMaxValue] = useState(10);
   const [axes, setAxes] = useState<Axis[]>([
-    { id: "1", name: "Speed", max: 5 },
-    { id: "2", name: "Power", max: 5 },
-    { id: "3", name: "Defense", max: 5 },
-    { id: "4", name: "Agility", max: 5 },
-    { id: "5", name: "Intelligence", max: 5 },
+    { id: "1", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
+    { id: "2", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
+    { id: "3", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
+    { id: "4", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
+    { id: "5", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
   ]);
 
   const [plots, setPlots] = useState<Plot[]>([
@@ -65,7 +124,7 @@ const Index = () => {
         <div className="container mx-auto px-6 py-4 flex flex-row justify-between items-center">
           <div className="flex-1 text-center">
             <h1 className="text-3xl font-bold text-foreground font-space">FriendStat.xyz</h1>
-            <p className="text-sm text-muted-foreground mt-1 font-space">Create and customize radar charts</p>
+            <p className="text-sm text-muted-foreground mt-1 font-space">Rank your friends!</p>
           </div>
           <button 
             onClick={() => setMenuIsOpen(!menuIsOpen)} 
