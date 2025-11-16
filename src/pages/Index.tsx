@@ -23,11 +23,11 @@ const Index = () => {
   const [isSmallChart, setIsSmallChart] = useState(false);
   const chartRef = useRef(null);
   const [axes, setAxes] = useState<Axis[]>([
-    { id: "1", name: "Speed", max: 100 },
-    { id: "2", name: "Power", max: 100 },
-    { id: "3", name: "Defense", max: 100 },
-    { id: "4", name: "Agility", max: 100 },
-    { id: "5", name: "Intelligence", max: 100 },
+    { id: "1", name: "Speed", max: 5 },
+    { id: "2", name: "Power", max: 5 },
+    { id: "3", name: "Defense", max: 5 },
+    { id: "4", name: "Agility", max: 5 },
+    { id: "5", name: "Intelligence", max: 5 },
   ]);
 
   const [plots, setPlots] = useState<Plot[]>([

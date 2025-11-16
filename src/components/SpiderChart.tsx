@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+// TODO: set static max valueacross all instead of individual
 interface SpiderChartProps {
   axes: Axis[];
   plots: Plot[];
@@ -116,8 +117,9 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       }
       return plot;
     });
-    
-    setPlots(updatedPlots);
+    if (distance <= chartRadius * 1.25){
+      setPlots(updatedPlots);
+    }
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -171,7 +173,7 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
       style={{ cursor: isDragging ? 'grabbing' : (selectedPlotId ? 'grab' : 'default') }}
     >
       {/* Custom Legend in top left */}
-      <div className="absolute top-2 left-2 z-[5] bg-card border border-border rounded-md shadow-sm p-2">
+      {!isSmallChart && (<div className="absolute top-2 left-2 z-[5] bg-card border border-border rounded-md shadow-sm p-2">
         <div className="flex flex-col gap-1.5">
           {plots.map((plot) => (
             <div
@@ -208,7 +210,7 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
             Add Plot
           </Button>
         </div>
-      </div>
+      </div>)}
 
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={chartData}>
@@ -232,7 +234,6 @@ export const SpiderChart = ({ axes, plots, isSmallChart, selectedPlotId, setSele
             fill={plot.color}
             fillOpacity={plot.id === selectedPlotId ? 0.5 : 0.2}
             strokeWidth={plot.id === selectedPlotId ? 3 : 2}
-            onClick={() => setSelectedPlotId(plot.id)}
             style={{ cursor: 'pointer' }}
           />
         ))}
