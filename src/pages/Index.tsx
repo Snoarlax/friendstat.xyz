@@ -20,7 +20,7 @@ export interface Plot {
   values: { [axisId: string]: number };
 }
 
-const randomAttributes = [
+const randomLabels = [
   "maturity",
   "intelligence",
   "height",
@@ -88,11 +88,11 @@ const Index = () => {
   const [useSharedMax, setUseSharedMax] = useState(false);
   const [sharedMaxValue, setSharedMaxValue] = useState(10);
   const [axes, setAxes] = useState<Axis[]>([
-    { id: "1", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
-    { id: "2", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
-    { id: "3", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
-    { id: "4", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
-    { id: "5", name: randomAttributes[getRandomInt(randomAttributes.length)], max: 5 },
+    { id: "1", name: randomLabels[getRandomInt(randomLabels.length)], max: 5 },
+    { id: "2", name: randomLabels[getRandomInt(randomLabels.length)], max: 5 },
+    { id: "3", name: randomLabels[getRandomInt(randomLabels.length)], max: 5 },
+    { id: "4", name: randomLabels[getRandomInt(randomLabels.length)], max: 5 },
+    { id: "5", name: randomLabels[getRandomInt(randomLabels.length)], max: 5 },
   ]);
 
   const [plots, setPlots] = useState<Plot[]>([
@@ -111,8 +111,8 @@ const Index = () => {
     const newAxes = axes.map(axis => {
       let randomName;
       do {
-        randomName = randomAttributes[getRandomInt(randomAttributes.length)];
-      } while (usedNames.has(randomName) && usedNames.size < randomAttributes.length);
+        randomName = randomLabels[getRandomInt(randomLabels.length)];
+      } while (usedNames.has(randomName) && usedNames.size < randomLabels.length);
       usedNames.add(randomName);
       return { ...axis, name: randomName };
     });

@@ -1,3 +1,6 @@
+# FriendStat.xyz
+A little project i made primarily leveraging nocode tools (lovable) with a bit of manual intervention here and there. Available on [friendstat.xyz](https://friendstat.xyz).
+
 # Welcome to your Lovable project
 
 ## Project info
